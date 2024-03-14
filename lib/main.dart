@@ -3,7 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:projectapp/core/theme/theme.dart';
 import 'package:flutter/services.dart';
 import 'package:projectapp/firebase_options.dart';
-// import 'package:projectapp/pages/home_wrapper/home_wrapper.dart';
+import 'package:projectapp/models/gender.dart';
+import 'package:projectapp/pages/auth/genderchoose.dart';
+import 'package:projectapp/pages/auth/login.dart';
+import 'package:projectapp/pages/auth/register.dart';
+import 'package:projectapp/pages/home_wrapper/home_wrapper.dart';
 // import 'package:projectapp/pages/onboardingpages.dart';
 import 'package:projectapp/pages/onboardingpages.dart';
 import 'package:projectapp/pages/splash.dart';
@@ -32,8 +36,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: AppTheme.lightTheme,
-      // home: HomeWrapper()
-      home: SplashScreen()
+      home: HomeWrapper()
+      //  home: Register(),
+      // home: SplashScreen(),
+      // home: SplashScreen()
       // home: OnboardingPages()
     );
   }

@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:projectapp/widget/login/login_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:http/http.dart' as http;
 
 
 class Login extends StatefulWidget {
@@ -10,6 +14,16 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+
+  // Map<String, dynamic> login(String email, String password) async {
+  //   FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+  //   final response = await http.post('http://api.com/user', body: {
+  //     'email': email,
+  //     'password': password,
+  //   });
+  //   final decoded = jsonDecode(response.body) as Map<String, dynamic>;
+  //   return decoded;
+  // }
 
   @override
   Widget build (BuildContext context){

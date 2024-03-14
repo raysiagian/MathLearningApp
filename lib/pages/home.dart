@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:projectapp/models/materi.dart';
 import 'package:projectapp/widget/home_materi_card.dart';
+import 'package:http/http.dart' as http;
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -10,14 +12,37 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final listMateri = Materi.listMateri;
+
+  String _userName = '';
+   
+  // final listMateri = Materi.listMateri;
+
+  List<Materi> materiList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchMateri();
+  }
+  
+  Future<void> fetchMateri() async {
+    final response = await http.get(Uri.parse('http://127.0.0.1:8000/api/getMateri'));
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body) as List<dynamic>;
+      setState(() {
+        materiList = jsonData.map((e) => Materi.fromJson(e)).toList();
+      });
+    } else {
+      print('Failed to load materi. Error code: ${response.statusCode}');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text("Ray Siagian"),
+        title: Text(_userName.isNotEmpty ? _userName : "$_userName"),
         centerTitle: false,
         automaticallyImplyLeading: false,
         leading: 
@@ -39,14 +64,23 @@ class _HomeState extends State<Home> {
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
           ),
-          ListView(
-            children: [
-              // buildAppBar(),
-              ...listMateri.map((materi) {
-                return HomeMateriCard(materi: materi);
-              })
-            ]
-          )
+
+           ListView.builder(
+            itemCount: materiList.length, // Menggunakan materiList.length
+            itemBuilder: (BuildContext context, int index) {
+              final materi = materiList[index]; // Menggunakan materiList
+              return HomeMateriCard(materi: materi);
+            },
+          ),
+
+          // ListView(
+          //   children: [
+          //     // buildAppBar(),
+          //     ...listMateri.map((materi) {
+          //       return HomeMateriCard(materi: materi);
+          //     })
+          //   ]
+          // )
         ],
       ),
     );
@@ -82,7 +116,7 @@ class _HomeState extends State<Home> {
               Padding(
                 padding: const EdgeInsets.only(top: 7.0),
                 child: Text(
-                  "Ray Siagian",
+                  "$_userName",
                   style: theme.textTheme.titleMedium?.copyWith(
                     color: theme.colorScheme.primary,
                     fontWeight: FontWeight.bold,
@@ -95,4 +129,10 @@ class _HomeState extends State<Home> {
       ),
     );
   }
+    void updateUserName(String name){
+    setState((){
+      _userName = name;
+    });
+  }
 }
+

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:projectapp/pages/auth/register.dart';
 import 'package:projectapp/pages/home.dart';
 import 'package:projectapp/widget/login/textfield_widget.dart';
-import 'package:projectapp/models/user.dart' as u;
+import 'package:projectapp/models/usermodel.dart' as u;
 
 class LoginWidget extends StatefulWidget {
   const LoginWidget({

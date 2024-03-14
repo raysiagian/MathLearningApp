@@ -1,6 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:projectapp/pages/auth/genderchoose.dart';
 import 'package:projectapp/pages/auth/login.dart';
 import 'package:projectapp/widget/register/textfieldregister_widget.dart';
 // import 'package:projectapp/models/user.dart';
@@ -51,28 +50,9 @@ class _RegisterWidgetState extends State<RegisterWidget> {
               TextFieldRegisterWidget(controller: _passwordController, label: 'Password', isPassword: true,),
               SizedBox(height: 100),
               GestureDetector(
-                onTap: () async{
-                   if(_formKey.currentState!.validate()){
-                    try{
-                      await Firebase.initializeApp();
-                      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                        email: _emailController.text, 
-                        password: _passwordController.text
-                      );
-                      User? user = userCredential.user;
-                      await user!.updateProfile(
-                        displayName: _nameController.text,
-                      );
-                      await user.reload();
-                      user = FirebaseAuth.instance.currentUser;
-                    }on FirebaseAuthException catch (e){
-                      print('Error $e');
-                    }
-                   }
-                  // String name = _nameController.text;
-                  // String email = _emailController.text;
-                  // String password = _passwordController.text;
-                  // _formKey.currentState!.validate();
+                onTap: () {
+                  if (!_formKey.currentState!.validate()) return;
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => GenderChoose(name: _nameController.text, email: _emailController.text, password: _passwordController.text)));
                 },
                 child: Container(
                   height: 44,
@@ -83,7 +63,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
-                    'Daftar',
+                    'Selanjutnya',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white,
