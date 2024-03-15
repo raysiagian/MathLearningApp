@@ -67,6 +67,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - D:/Semester 6/API/apimathapp/storage/app/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

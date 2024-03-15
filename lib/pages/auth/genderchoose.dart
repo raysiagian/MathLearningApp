@@ -5,9 +5,9 @@ import 'package:projectapp/models/usermodel.dart';
 import 'package:projectapp/pages/home.dart';
 import 'package:projectapp/widget/register/gender_widget.dart';
 
-
 class GenderChoose extends StatefulWidget {
-  const GenderChoose({super.key,
+  const GenderChoose({
+    super.key,
     required this.name,
     required this.email,
     required this.password,
@@ -43,8 +43,8 @@ class _GenderChooseState extends State<GenderChoose> {
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.max,
               children: List.generate(listGender.length, (index) {
-                  final gender = listGender[index];
-                  return GestureDetector(
+                final gender = listGender[index];
+                return GestureDetector(
                     onTap: () {
                       setState(() {
                         selectedGender = gender.code;
@@ -53,19 +53,16 @@ class _GenderChooseState extends State<GenderChoose> {
                     child: GenderWidget(
                       gender: gender,
                       selectedGender: selectedGender,
-                    )
-                  );
-                }
-              ),
+                    ));
+              }),
             ),
             SizedBox(height: 10),
             GestureDetector(
               onTap: () async {
-                try{
-                  UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                    email: widget.email, 
-                    password: widget.password
-                  );
+                try {
+                  UserCredential userCredential = await FirebaseAuth.instance
+                      .createUserWithEmailAndPassword(
+                          email: widget.email, password: widget.password);
                   User? user = userCredential.user;
                   await user!.updateProfile(
                     displayName: widget.name,
@@ -73,17 +70,12 @@ class _GenderChooseState extends State<GenderChoose> {
                   await user.reload();
                   user = FirebaseAuth.instance.currentUser;
 
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return Home();
-                      }
-                    )
-                  );
-                } on FirebaseAuthException catch (e){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return Home();
+                  }));
+                } on FirebaseAuthException catch (e) {
                   Navigator.pop(context, widget.name);
-                  
+
                   SnackBar(
                     content: Text('Akun sudah digunakan, gunakan akun lainnya'),
                     duration: Duration(seconds: 5),

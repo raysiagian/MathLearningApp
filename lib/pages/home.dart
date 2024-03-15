@@ -17,72 +17,78 @@ class _HomeState extends State<Home> {
    
   // final listMateri = Materi.listMateri;
 
-  List<Materi> materiList = [];
+  Future<List<Materi>> fetchMateri() async {
+    try {
+      final response = await http.get(Uri.parse('http://10.0.2.2:8000/api/getMateri'));
 
-  @override
-  void initState() {
-    super.initState();
-    fetchMateri();
-  }
-  
-  Future<void> fetchMateri() async {
-    final response = await http.get(Uri.parse('http://127.0.0.1:8000/api/getMateri'));
-    if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body) as List<dynamic>;
-      setState(() {
-        materiList = jsonData.map((e) => Materi.fromJson(e)).toList();
-      });
-    } else {
-      print('Failed to load materi. Error code: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
+        return jsonData.map((e) => Materi.fromJson(e)).toList();
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      print(e.toString());
+      return [];
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_userName.isNotEmpty ? _userName : "$_userName"),
-        centerTitle: false,
-        automaticallyImplyLeading: false,
-        leading: 
-        Container(
-          margin: EdgeInsets.all(10),
-          child: Image.asset(
-            "assets/images/icon_profile man.png",
-            fit: BoxFit.cover,
+    return FutureBuilder(
+      future: fetchMateri(),
+      builder: (context, snapshot) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(_userName.isNotEmpty ? _userName : "$_userName"),
+            centerTitle: false,
+            automaticallyImplyLeading: false,
+            leading: 
+            Container(
+              margin: EdgeInsets.all(10),
+              child: Image.asset(
+                "assets/images/icon_profile man.png",
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
-        ),
-      ),
-      backgroundColor: theme.colorScheme.secondary,
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.asset(
-            'assets/images/background_screen.png',
-            fit: BoxFit.cover,
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-          ),
+          backgroundColor: theme.colorScheme.secondary,
+          body: Stack(
+            fit: StackFit.expand,
+            children: [
+              Image.asset(
+                'assets/images/background_screen.png',
+                fit: BoxFit.cover,
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+              ),
+              if (snapshot.connectionState == ConnectionState.waiting)...[
+                Center(
+                  child: CircularProgressIndicator(),
+                ),]
+              else ...[
+               ListView.builder(
+               itemCount: snapshot.data!.length, // Menggunakan materiList.length
+               itemBuilder: (BuildContext context, int index) {
+                 final materi = snapshot.data![index]; // Menggunakan materiList
+                 return HomeMateriCard(materi: materi);
+                 },
+               ),
 
-           ListView.builder(
-            itemCount: materiList.length, // Menggunakan materiList.length
-            itemBuilder: (BuildContext context, int index) {
-              final materi = materiList[index]; // Menggunakan materiList
-              return HomeMateriCard(materi: materi);
-            },
+              // ListView(
+              //   children: [
+              //     // buildAppBar(),
+              //     ...listMateri.map((materi) {
+              //       return HomeMateriCard(materi: materi);
+              //     })
+              //   ]
+              // )
+            ],
+          ],
           ),
-
-          // ListView(
-          //   children: [
-          //     // buildAppBar(),
-          //     ...listMateri.map((materi) {
-          //       return HomeMateriCard(materi: materi);
-          //     })
-          //   ]
-          // )
-        ],
-      ),
+        );
+      }
     );
   }
 

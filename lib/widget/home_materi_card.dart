@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:projectapp/models/materi.dart';
 import 'package:projectapp/widget/map/map_materi.dart';
@@ -37,8 +39,8 @@ class HomeMateriCard extends StatelessWidget {
                       topRight: Radius.circular(20),
                       topLeft: Radius.circular(20),
                     ),
-                    child: Image.asset(
-                      materi.imageCard,
+                    child: Image.network(
+                      r'http://10.0.2.2:8000/storage/' + materi.imageCard.replaceFirst('public/', ''),
                       height: 150,
                       fit: BoxFit.cover,
                       width: double.infinity,

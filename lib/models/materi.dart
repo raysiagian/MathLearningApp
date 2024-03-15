@@ -1,6 +1,8 @@
 import 'package:projectapp/models/level.dart';
 import 'package:projectapp/models/question_model.dart';
 import 'package:projectapp/models/unit.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class Materi {
   final int id;
@@ -16,6 +18,13 @@ class Materi {
     required this.imageCard,
     required this.imageBackground,
   });
+
+  Future<List<Map<String, dynamic>>> getMateri()async{
+    var url = Uri.parse("http://10.0.2.2:8000/api/getMateri");
+    final response = await http.get(url, headers: {"Content-Type": "aplication/json"});
+    final List body = json.decode(response.body);
+    return List<Map<String, dynamic>>.from(body);
+  }
 
   // static final listMateri = [
   //   Materi(

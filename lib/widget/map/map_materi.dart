@@ -28,10 +28,16 @@ class MapMateri extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset(
-            materi.imageBackground,
+          Image.network(
+            r'http://10.0.2.2:8000/storage/' + materi.imageBackground.replaceFirst('public/', ''),
+            height: 150,
             fit: BoxFit.cover,
+            width: double.infinity,
           ),
+          // Image.asset(
+          //   materi.imageBackground,
+          //   fit: BoxFit.cover,
+          // ),
           ListView.builder(
             itemCount: materi.units.length,
             shrinkWrap: true,
