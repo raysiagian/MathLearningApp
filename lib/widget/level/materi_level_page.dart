@@ -19,7 +19,7 @@ class MateriLevelPage extends StatefulWidget {
 }
 
 class _MateriLevelPageState extends State<MateriLevelPage> {
-  late VideoPlayerController _controller;
+  VideoPlayerController? _controller;
   late Future<void> _initializeVideoPlayerFuture;
 
   @override
@@ -32,10 +32,10 @@ class _MateriLevelPageState extends State<MateriLevelPage> {
     final videoUrl = await widget.level.fetchVideoUrl();
     if (videoUrl != null) {
       _controller = VideoPlayerController.network(videoUrl);
-      _initializeVideoPlayerFuture = _controller.initialize();
-      _controller.setLooping(true);
-      _controller.setVolume(1.0);
-      _controller.addListener(() {
+      _initializeVideoPlayerFuture = _controller!.initialize();
+      _controller?.setLooping(true);
+      _controller?.setVolume(1.0);
+      _controller?.addListener(() {
         setState(() {});
       });
     } else {
@@ -45,7 +45,7 @@ class _MateriLevelPageState extends State<MateriLevelPage> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller?.dispose();
     super.dispose();
   }
 
@@ -81,14 +81,19 @@ class _MateriLevelPageState extends State<MateriLevelPage> {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
-        child: _controller != null && _controller.value.isInitialized
-            ? AspectRatio(
-                aspectRatio: _controller.value.aspectRatio,
-                child: VideoPlayer(_controller),
-              )
-            : Center(
-                child: CircularProgressIndicator(),
-              ),
+        child: Column(children: [
+          SizedBox( height: 30,),
+          Container(
+            child: _controller != null && _controller!.value.isInitialized
+          ? AspectRatio(
+              aspectRatio: _controller!.value.aspectRatio,
+              child: VideoPlayer(_controller!),
+            )
+          : Center(
+              child: CircularProgressIndicator(),
+            ),
+          )
+        ]),
       ),
     );
   }
