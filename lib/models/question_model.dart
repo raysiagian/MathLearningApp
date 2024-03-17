@@ -18,4 +18,6 @@ class Question{
 
   }
 
+  static fromJson(questionJson) {}
+
 }

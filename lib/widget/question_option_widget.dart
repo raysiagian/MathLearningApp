@@ -4,7 +4,7 @@ import 'package:projectapp/models/level.dart';
 class QuestionOptionWidget extends StatelessWidget {
   const QuestionOptionWidget({
     Key? key,
-    required this.options,
+    required this.options, required bool isSelected, required Null Function() onOptionSelected,
   }) : super(key: key);
 
   final String options;

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:projectapp/widget/register/register_widget.dart';
 
 
+
 class Register extends StatefulWidget {
   const Register({super.key});
 

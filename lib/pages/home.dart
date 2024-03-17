@@ -41,7 +41,8 @@ class _HomeState extends State<Home> {
       builder: (context, snapshot) {
         return Scaffold(
           appBar: AppBar(
-            title: Text(_userName.isNotEmpty ? _userName : "$_userName"),
+            // title: Text(_userName.isNotEmpty ? _userName : "$_userName"),
+             title: Text("Selamat Datang"),
             centerTitle: false,
             automaticallyImplyLeading: false,
             leading: 
@@ -122,7 +123,8 @@ class _HomeState extends State<Home> {
               Padding(
                 padding: const EdgeInsets.only(top: 7.0),
                 child: Text(
-                  "$_userName",
+                  // "$_userName",
+                   "Selamat Datang",
                   style: theme.textTheme.titleMedium?.copyWith(
                     color: theme.colorScheme.primary,
                     fontWeight: FontWeight.bold,

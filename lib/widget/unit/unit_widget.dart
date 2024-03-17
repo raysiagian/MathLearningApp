@@ -1,21 +1,28 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
+import 'package:projectapp/models/level.dart';
 import 'package:projectapp/models/materi.dart';
 import 'package:projectapp/models/unit.dart';
 import 'package:projectapp/widget/levelbutton_widget.dart';
 
 class UnitWidget extends StatelessWidget {
   const UnitWidget({
-    super.key,
+    Key? key,
     required this.unit,
     required this.materi,
-  });
+  }) : super(key: key);
 
   final Unit unit;
   final Materi materi;
 
   @override
   Widget build(BuildContext context) {
+    // Panggil fungsi fetchLevels() saat UnitWidget dibuat atau dirender
+    fetchLevel();
+
     return ListView(
       shrinkWrap: true,
       children: [
@@ -49,13 +56,53 @@ class UnitWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
-        ...unit.levels.map((level) {
-          return LevelButtonWidget(
-            level: level,
-            materi: materi,
-          );
-        })
+        // Gunakan FutureBuilder untuk menampilkan widget ketika data level sudah tersedia
+        FutureBuilder<List<Level>>(
+          future: fetchLevel(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(), // Tampilkan indikator loading
+              );
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Text('Error: ${snapshot.error}'),
+              );
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(
+                child: Text('No data available'),
+              );
+            } else {
+              // Tampilkan tombol level jika data sudah tersedia
+              return Column(
+                children: snapshot.data!.map((level) {
+                  return LevelButtonWidget(
+                    level: level,
+                    materi: materi,
+                  );
+                }).toList(),
+              );
+            }
+          },
+        ),
       ],
     );
+  }
+
+  // Fungsi untuk memanggil API dan mendapatkan data level
+  Future<List<Level>> fetchLevel() async {
+    try {
+      final response = await http.get(Uri.parse('http://10.0.2.2:8000/api/getLevel'));
+
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body)['data'] as List<dynamic>;
+        return jsonData.map((e) => Level.fromJson(e)).toList();
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      print(e.toString());
+      return [];
+    }
   }
 }

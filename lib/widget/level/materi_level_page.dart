@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:projectapp/models/level.dart';
 import 'package:projectapp/models/materi.dart';
 import 'package:projectapp/widget/dialog_question_on_close.dart';
+import 'package:video_player/video_player.dart';
 
 class MateriLevelPage extends StatefulWidget {
-  const MateriLevelPage({super.key, required this.materi, required this.level});
+  const MateriLevelPage({
+    Key? key,
+    required this.level,
+    required this.materi,
+  }) : super(key: key);
 
   final Materi materi;
   final Level level;
@@ -14,12 +19,35 @@ class MateriLevelPage extends StatefulWidget {
 }
 
 class _MateriLevelPageState extends State<MateriLevelPage> {
-  // id rules
-  // angka pertama menunjukkan materi
-  // angka kedua menunjukkan urutan level
-  // angka ketiga menujukkan urutan pertanyaan
+  late VideoPlayerController _controller;
+  late Future<void> _initializeVideoPlayerFuture;
 
-  int index = 0;
+  @override
+  void initState() {
+    super.initState();
+    _initializeVideoPlayer();
+  }
+
+  void _initializeVideoPlayer() async {
+    final videoUrl = await widget.level.fetchVideoUrl();
+    if (videoUrl != null) {
+      _controller = VideoPlayerController.network(videoUrl);
+      _initializeVideoPlayerFuture = _controller.initialize();
+      _controller.setLooping(true);
+      _controller.setVolume(1.0);
+      _controller.addListener(() {
+        setState(() {});
+      });
+    } else {
+      // Handle error jika gagal memuat URL video
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,22 +73,22 @@ class _MateriLevelPageState extends State<MateriLevelPage> {
                 return DialogQuestionOnClose(
                   materi: widget.materi,
                 );
-            });
+              },
+            );
           },
         ),
         title: Text('Level ${widget.level.number}'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 20,
-            ),
-            // video
-            // description
-          ],
-        ),
+        child: _controller != null && _controller.value.isInitialized
+            ? AspectRatio(
+                aspectRatio: _controller.value.aspectRatio,
+                child: VideoPlayer(_controller),
+              )
+            : Center(
+                child: CircularProgressIndicator(),
+              ),
       ),
     );
   }

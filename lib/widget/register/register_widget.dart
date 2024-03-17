@@ -84,13 +84,13 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                   //   );
                   //   return;
                   // }
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => GenderChoose(
-                              name: _nameController.text,
-                              email: _emailController.text,
-                              password: _passwordController.text)));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => GenderChoose(
+                    name: _nameController.text,
+                    email: _emailController.text,
+                    password: _passwordController.text)));
                 },
                 child: Container(
                   height: 44,

@@ -37,6 +37,7 @@ class LevelButtonWidget extends StatelessWidget {
                 case LevelType.postTest:
                   return PostTestLevelPage(
                     level: level,
+                    materi: materi,
                   );
               }
             },

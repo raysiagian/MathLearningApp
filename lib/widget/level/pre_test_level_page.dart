@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:projectapp/models/level.dart';
 import 'package:projectapp/models/materi.dart';
+import 'package:projectapp/models/timer_model.dart';
 import 'package:projectapp/widget/dialog_question_on_close.dart';
 import 'package:projectapp/widget/question_option_widget.dart';
 import 'package:projectapp/widget/question_widget.dart';
+import 'package:projectapp/widget/timer_widget.dart';
 import 'package:projectapp/widget/selanjutnya_button.dart';
 
 class PreTestLevelPage extends StatefulWidget {
@@ -22,14 +24,84 @@ class PreTestLevelPage extends StatefulWidget {
 
 class _PreTestLevelPageState extends State<PreTestLevelPage> {
   int index = 0;
+  int totalScore = 0;
+  late TimerModel timerModel;
+  String? selectedOption;
+
+  @override
+  void initState(){
+    super.initState();
+    timerModel = TimerModel(
+      durationInSeconds: 10, 
+      onTimerUpdate: updateTimerUI, 
+      onTimerFinish: timerFinishAction,
+    );
+    timerModel.startTimer();
+  }
+
+  void updateTimerUI(int remainingTime){
+    setState(() {});
+  }
+
+  void timerFinishAction() async{
+    timerModel.dispose();
+
+    await Future.delayed(Duration(seconds: 1));
+
+    int currentScore = calculateScore();
+
+    if (index < widget.level.questions.length - 1){
+      setState(() {
+        index ++;
+        totalScore += currentScore;
+        selectedOption = null;
+
+        timerModel = TimerModel(
+          durationInSeconds: 10, 
+          onTimerUpdate: updateTimerUI, 
+          onTimerFinish: timerFinishAction,
+        );
+        timerModel.startTimer();
+      });
+    }else{
+      print("All question answered");
+      print("Total Score: $totalScore");
+    }
+  }
+
+  int calculateScore(){
+    int currentScore = 0;
+    final currentQuestion = widget.level.questions[index];
+
+    currentQuestion.options.forEach((key, value) {
+      if(value){
+        if(selectedOption == key){
+          currentScore += 10;
+        }
+      }
+    });
+    return currentScore;
+  }
 
   void pertanyaanSelanjutnya() {
-    if (index == widget.level.questions.length - 1) {
-      return;
-    } else {
+    if (index < widget.level.questions.length -1 ){
       setState(() {
         index++;
+        selectedOption = null;
+
+        timerModel.dispose();
+        timerModel = TimerModel(
+          durationInSeconds: 10, 
+          onTimerUpdate: updateTimerUI, 
+          onTimerFinish: timerFinishAction,
+        );
+        timerModel.startTimer();
       });
+    }
+    @override
+    void dispose() {
+      timerModel.dispose();
+      super.dispose();
     }
   }
 
@@ -71,6 +143,7 @@ class _PreTestLevelPageState extends State<PreTestLevelPage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  TimerWidget(timerModel: timerModel),
                   QuestionWidget(
                     question: question.title,
                     indexAction: index,
@@ -83,7 +156,15 @@ class _PreTestLevelPageState extends State<PreTestLevelPage> {
             Row(
               children: question.options.keys.map((option) {
                 return Expanded(
-                  child: QuestionOptionWidget(options: option),
+                  child: QuestionOptionWidget(
+                    options: option,
+                    onOptionSelected:(){
+                      setState(() {
+                        selectedOption = option;
+                      });
+                    },
+                    isSelected: option == selectedOption,
+                  ),
                 );
               }).toList(),
             ),

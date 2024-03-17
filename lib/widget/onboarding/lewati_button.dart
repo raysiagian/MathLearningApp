@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:projectapp/widget/onboarding/onboarding_page_widget.dart';
 
-class LewatiButton extends StatelessWidget{
-  const LewatiButton({
-    Key? key, required Null Function() onPressed,
-  }):super(key: key);
+class LewatiButton extends StatelessWidget {
+  final VoidCallback onPressed;
 
+  const LewatiButton({
+    Key? key,
+    required this.onPressed,
+  }) : super(key: key);
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){},
+      onTap: onPressed,
       child: Container(
         height: 44,
         width: 82,
@@ -25,7 +27,7 @@ class LewatiButton extends StatelessWidget{
           style: TextStyle(
             color: Colors.white,
             fontSize: 18,
-          )
+          ),
         ),
       ),
     );
